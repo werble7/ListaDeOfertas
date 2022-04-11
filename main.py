@@ -28,7 +28,22 @@ if __name__ == '__main__':
                 csvfile = open(arquivo, encoding="UTF-8")
                 reader = csv.reader(csvfile)
 
+                '''
                 for oferta in reader:
+                    if entrada[1] in oferta[4]:
+                        print(f"* {oferta[1]} ({oferta[0]})")
+                        horas = oferta[4].split('(')
+                        horas = horas[1].split(')')
+                        print(f"\tTurma {oferta[2]}: {horas[0]} ({oferta[-2]} alunos)")
+                        if int(oferta[-2]) > 5:
+                            soma += int((horas[0])[0:2])
+                            alunos += int(oferta[-2])
+                '''
+
+                for oferta in reader:
+                    listaOfertas.append(oferta)
+
+                for oferta in listaOfertas:
                     if entrada[1] in oferta[4]:
                         print(f"* {oferta[1]} ({oferta[0]})")
                         horas = oferta[4].split('(')
@@ -53,8 +68,11 @@ if __name__ == '__main__':
                 csvfile = open(arquivo, encoding="UTF-8")
                 reader = csv.reader(csvfile)
 
-                # for oferta in reader:
-                # listaOfertas.append(oferta)
+                for oferta in reader:
+                    listaOfertas.append(oferta)
+
+                for oferta in listaOfertas:
+                    print(oferta)
 
                 '''
                 for codigo in codigos:
