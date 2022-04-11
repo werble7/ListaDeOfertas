@@ -12,8 +12,10 @@ if __name__ == '__main__':
     entrada = input().split(" ", 1)
     soma = 0
     alunos = 0
+    listaOfertas = []
 
     while entrada[0] != "FIM":
+
         if entrada[0] == "leia":
             if trataArquivo(entrada[1]):
                 arquivo = entrada[1]
@@ -21,9 +23,11 @@ if __name__ == '__main__':
                 reader = csv.reader(csvfile)
 
         if entrada[0] == "carga":
+
             try:
                 csvfile = open(arquivo, encoding="UTF-8")
                 reader = csv.reader(csvfile)
+
                 for oferta in reader:
                     if entrada[1] in oferta[4]:
                         print(f"* {oferta[1]} ({oferta[0]})")
@@ -33,10 +37,42 @@ if __name__ == '__main__':
                         if int(oferta[-2]) > 5:
                             soma += int((horas[0])[0:2])
                             alunos += int(oferta[-2])
+
                 print(f"[Carga total considerada: {soma}h ({soma/alunos:.2f}/aluno)]")
+
             except NameError:
                 print(f"No hay {entrada[1]}")
                 break
+
+        if entrada[0] == "matriculas":
+
+            codigos = entrada[1].split()
+            existe = False
+
+            try:
+                csvfile = open(arquivo, encoding="UTF-8")
+                reader = csv.reader(csvfile)
+
+                # for oferta in reader:
+                # listaOfertas.append(oferta)
+
+                '''
+                for codigo in codigos:
+
+                    for oferta in reader:
+                        if codigo == oferta[0]:
+                            existe = True
+
+                    if existe:
+                        print(codigo)
+                        existe = False
+                '''
+
+            except NameError:
+                print(f"No hay {entrada[1]}")
+                break
+
+        # if entrada[0] == "disciplina":
 
         entrada = input().split(" ", 1)
 
