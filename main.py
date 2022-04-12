@@ -53,13 +53,16 @@ if __name__ == '__main__':
                             soma += int((horas[0])[0:2])
                             alunos += int(oferta[-2])
 
-                print(entrada[1] + ":")
+                if len(dicio) > 0:
+                    print(entrada[1] + ":")
 
-                for chave, valor in sorted(dicio.items()):
-                    print(chave)
-                    print(valor)
+                    for chave, valor in sorted(dicio.items()):
+                        print(chave)
+                        print(valor)
 
-                print(f"[Carga total considerada: {soma}h ({soma/alunos:.2f}h/aluno)]")
+                    print(f"[Carga total considerada: {soma}h ({soma/alunos:.2f}h/aluno)]")
+                else:
+                    print(f"No hay {entrada[1]}...")
 
             except NameError:
                 print(f"No hay {entrada[1]}...")
@@ -94,6 +97,10 @@ if __name__ == '__main__':
                         if i == valor:
                             print(f"{valor} matriculados em {chave}")
 
+                if len(dicio) == 0:
+                    for codigo in codigos:
+                        print(f"No hay {codigo}...")
+
             except NameError:
                 print(f"No hay {entrada[1]}...")
                 break
@@ -107,7 +114,7 @@ if __name__ == '__main__':
                 csvfile = open(arquivo, encoding="UTF-8")
                 reader = csv.reader(csvfile)
                 salvo = ""
-                contDisc = 0
+                x = False
                 listaNova = []
 
                 for oferta in reader:
@@ -116,46 +123,25 @@ if __name__ == '__main__':
                 for oferta in listaArquivo:
                     qtd = contadorCodTurma(oferta[0], oferta[2])
                     if qtd >= int(entrada[1]):
-                        if not f"{oferta[0]} {oferta[1]}" in listaNova:
-                            listaNova.append(f"{oferta[0]} {oferta[1]}")
-                        if oferta[2] != salvo:
-                            listaNova.append(f"{oferta[2]} ({qtd})")
-                        salvo = oferta[2]
+                        dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] = f"{oferta[2]} ({str(qtd)})"
+                        x = True
 
-                for i, item in enumerate(listaNova):
-                    print(item)
-
-                '''
-                listaCods = []
-                for i in range(len(listaDisciplina)):
-                    if not listaDisciplina[i][0] in listaCods:
-                        listaCods.append(listaDisciplina[i][0])
-
-                for oferta in listaArquivo:
-                    if oferta[0] in listaCods:
-                '''
-
-                '''
-                if contDisc > 0:
+                if x:
                     print(f"Turmas com pelo menos {entrada[1]} docentes:")
                 else:
                     print(f"No hay {entrada[1]}...")
-                '''
 
-                '''
+                i = 0
                 for chave, valor in sorted(dicio.items()):
                     chave = chave.split(", ")
-                    print(f" * {chave[0]} ({chave[1]}): {valor}")
-                '''
-                # if contDisc > 0:
-                #     print(f"Turmas com pelo menos {entrada[1]} docentes:")
-
-                # for chave, valor in sorted(dicio.items()):
-                #     chave = chave.split(", ")
-                #     print(f"* {chave[0]} ({chave[1]}): {valor}")
-
-                # if contDisc == 0:
-                #     print(f"No hay {entrada[1]}...")
+                    if chave[1] != salvo:
+                        if i > 0:
+                            print()
+                        print(f" * {chave[0]} ({chave[1]}): {valor}", end="")
+                    else:
+                        print(",", valor, end="")
+                    salvo = chave[1]
+                    i = 1
 
             except NameError:
                 print(f"No hay {entrada[1]}...")
