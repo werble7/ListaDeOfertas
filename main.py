@@ -7,7 +7,7 @@ def trataArquivo(ent):
     return 0
 
 
-def contador(pCodigo, pTurma):
+def contadorCodTurma(pCodigo, pTurma):
     ct = 0
     for oferta in listaArquivo:
         if oferta[0] == pCodigo and oferta[2] == pTurma:
@@ -21,7 +21,7 @@ if __name__ == '__main__':
     soma = 0
     alunos = 0
     listaArquivo = []
-    listaCarga = []
+    listaDisciplina = []
     dicio = {}
 
     while entrada[0] != "FIM":
@@ -59,7 +59,7 @@ if __name__ == '__main__':
                     print(chave)
                     print(valor)
 
-                print(f"[Carga total considerada: {soma}h ({soma/alunos:.2f}/aluno)]")
+                print(f"[Carga total considerada: {soma}h ({soma/alunos:.2f}h/aluno)]")
 
             except NameError:
                 print(f"No hay {entrada[1]}...")
@@ -106,14 +106,47 @@ if __name__ == '__main__':
             try:
                 csvfile = open(arquivo, encoding="UTF-8")
                 reader = csv.reader(csvfile)
-                # salvo = ""
-                # contDisc = 0
+                salvo = ""
+                contDisc = 0
+                listaNova = []
 
                 for oferta in reader:
                     listaArquivo.append(oferta)
 
-                # for oferta in listaArquivo:
+                for oferta in listaArquivo:
+                    qtd = contadorCodTurma(oferta[0], oferta[2])
+                    if qtd >= int(entrada[1]):
+                        if not f"{oferta[0]} {oferta[1]}" in listaNova:
+                            listaNova.append(f"{oferta[0]} {oferta[1]}")
+                        if oferta[2] != salvo:
+                            listaNova.append(f"{oferta[2]} ({qtd})")
+                        salvo = oferta[2]
 
+                for i, item in enumerate(listaNova):
+                    print(item)
+
+                '''
+                listaCods = []
+                for i in range(len(listaDisciplina)):
+                    if not listaDisciplina[i][0] in listaCods:
+                        listaCods.append(listaDisciplina[i][0])
+
+                for oferta in listaArquivo:
+                    if oferta[0] in listaCods:
+                '''
+
+                '''
+                if contDisc > 0:
+                    print(f"Turmas com pelo menos {entrada[1]} docentes:")
+                else:
+                    print(f"No hay {entrada[1]}...")
+                '''
+
+                '''
+                for chave, valor in sorted(dicio.items()):
+                    chave = chave.split(", ")
+                    print(f" * {chave[0]} ({chave[1]}): {valor}")
+                '''
                 # if contDisc > 0:
                 #     print(f"Turmas com pelo menos {entrada[1]} docentes:")
 
