@@ -7,12 +7,29 @@ def trataArquivo(ent):
     return 0
 
 
+def insereCodigo(pCodigo):
+    posicao = achaCodigo(pCodigo)
+    if posicao == -1:
+        listaOfertas.append([pCodigo, 1])
+    else:
+        listaOfertas[posicao][1] = int(listaOfertas[posicao][1]) + 1
+
+
+def achaCodigo(pCodigo):
+    for i, x in enumerate(listaOfertas):
+        if x[0] == pCodigo:
+            return i
+    return -1
+
+
 if __name__ == '__main__':
 
     entrada = input().split(" ", 1)
     soma = 0
     alunos = 0
     listaOfertas = []
+    listaCarga = []
+    dicio = {}
 
     while entrada[0] != "FIM":
 
@@ -39,7 +56,14 @@ if __name__ == '__main__':
                             soma += int((horas[0])[0:2])
                             alunos += int(oferta[-2])
                 '''
+                ''' 
+                for i, oferta in enumerate(reader):
+                    if i > 0 and entrada[1] in oferta[4]:
+                        insereCodigo(oferta[0])
 
+                print(listaOfertas)
+                '''
+                '''
                 for oferta in reader:
                     listaOfertas.append(oferta)
 
@@ -52,8 +76,25 @@ if __name__ == '__main__':
                         if int(oferta[-2]) > 5:
                             soma += int((horas[0])[0:2])
                             alunos += int(oferta[-2])
+                '''
 
-                print(f"[Carga total considerada: {soma}h ({soma/alunos:.2f}/aluno)]")
+                for oferta in reader:
+                    listaOfertas.append(oferta)
+
+                for oferta in listaOfertas:
+                    if entrada[1] in oferta[4]:
+                        horas = oferta[4].split('(')
+                        horas = horas[1].split(')')
+                        try:
+                            dicio[f"* {oferta[1]} ({oferta[0]})"] += f"\n\tTurma {oferta[2]}: {horas[0]} ({oferta[-2]} alunos)"
+                        except KeyError:
+                            dicio[f"* {oferta[1]} ({oferta[0]})"] = f"\tTurma {oferta[2]}: {horas[0]} ({oferta[-2]} alunos)"
+
+                for chave, valor in sorted(dicio.items()):
+                    print(chave)
+                    print(valor)
+
+                # print(f"[Carga total considerada: {soma}h ({soma/alunos:.2f}/aluno)]")
 
             except NameError:
                 print(f"No hay {entrada[1]}")
