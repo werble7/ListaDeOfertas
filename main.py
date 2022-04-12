@@ -7,6 +7,14 @@ def trataArquivo(ent):
     return 0
 
 
+def contador(pCodigo, pTurma):
+    ct = 0
+    for oferta in listaArquivo:
+        if oferta[0] == pCodigo and oferta[2] == pTurma:
+            ct += 1
+    return ct
+
+
 if __name__ == '__main__':
 
     entrada = input().split(" ", 1)
@@ -38,12 +46,14 @@ if __name__ == '__main__':
                         horas = oferta[4].split('(')
                         horas = horas[1].split(')')
                         try:
-                            dicio[f"* {oferta[1]} ({oferta[0]})"] += f"\n\tTurma {oferta[2]}: {horas[0]} ({oferta[-2]} alunos)"
+                            dicio[f" * {oferta[1]} ({oferta[0]}):"] += f"\n     Turma {oferta[2]}: {horas[0]} ({oferta[-2]} alunos)"
                         except KeyError:
-                            dicio[f"* {oferta[1]} ({oferta[0]})"] = f"\tTurma {oferta[2]}: {horas[0]} ({oferta[-2]} alunos)"
+                            dicio[f" * {oferta[1]} ({oferta[0]}):"] = f"     Turma {oferta[2]}: {horas[0]} ({oferta[-2]} alunos)"
                         if int(oferta[-2]) > 5:
                             soma += int((horas[0])[0:2])
                             alunos += int(oferta[-2])
+
+                print(entrada[1] + ":")
 
                 for chave, valor in sorted(dicio.items()):
                     print(chave)
@@ -52,7 +62,7 @@ if __name__ == '__main__':
                 print(f"[Carga total considerada: {soma}h ({soma/alunos:.2f}/aluno)]")
 
             except NameError:
-                print(f"No hay {entrada[1]}")
+                print(f"No hay {entrada[1]}...")
                 break
             finally:
                 dicio = {}
@@ -85,7 +95,7 @@ if __name__ == '__main__':
                             print(f"{valor} matriculados em {chave}")
 
             except NameError:
-                print(f"No hay {entrada[1]}")
+                print(f"No hay {entrada[1]}...")
                 break
             finally:
                 dicio = {}
@@ -96,17 +106,33 @@ if __name__ == '__main__':
             try:
                 csvfile = open(arquivo, encoding="UTF-8")
                 reader = csv.reader(csvfile)
+                # salvo = ""
+                # contDisc = 0
 
                 for oferta in reader:
                     listaArquivo.append(oferta)
 
+                # for oferta in listaArquivo:
+
+                # if contDisc > 0:
+                #     print(f"Turmas com pelo menos {entrada[1]} docentes:")
+
+                # for chave, valor in sorted(dicio.items()):
+                #     chave = chave.split(", ")
+                #     print(f"* {chave[0]} ({chave[1]}): {valor}")
+
+                # if contDisc == 0:
+                #     print(f"No hay {entrada[1]}...")
+
             except NameError:
-                print(f"No hay {entrada[1]}")
+                print(f"No hay {entrada[1]}...")
+            finally:
+                dicio = {}
+                listaArquivo = []
 
         entrada = input().split(" ", 1)
 
     try:
         csvfile.close()
-        print("Arquivo fechado")
     except NameError:
         pass
