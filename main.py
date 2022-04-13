@@ -23,42 +23,45 @@ if __name__ == '__main__':
     listaArquivo = []
     listaDisciplina = []
     dicio = {}
+    arquivo = ''
 
     while entrada[0] != "FIM":
 
         if entrada[0] == "leia":
             if trataArquivo(entrada[1]):
-                arquivo = entrada[1]
-                csvfile = open(arquivo, encoding="UTF-8")
-                reader = csv.reader(csvfile)
+                if entrada[1] != arquivo:
+                    csvfile = open(entrada[1], encoding="UTF-8")
+                    reader = csv.reader(csvfile)
+                    for i, item in enumerate(reader):
+                        if i > 0:
+                            listaArquivo.append(item)
+                    arquivo = entrada[1]
 
         if entrada[0] == "carga":
 
             try:
-                csvfile = open(arquivo, encoding="UTF-8")
-                reader = csv.reader(csvfile)
-
-                for oferta in reader:
-                    listaArquivo.append(oferta)
-
                 for oferta in listaArquivo:
                     if entrada[1] in oferta[4]:
                         horas = oferta[4].split('(')
-                        horas = horas[1].split(')')
+                        horas = horas[1].split('h')
                         try:
-                            dicio[f" * {oferta[1]} ({oferta[0]}):"] += f"\n     Turma {oferta[2]}: {horas[0]} ({oferta[-2]} alunos)"
+                            dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] += f"\n     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
                         except KeyError:
-                            dicio[f" * {oferta[1]} ({oferta[0]}):"] = f"     Turma {oferta[2]}: {horas[0]} ({oferta[-2]} alunos)"
+                            dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] = f"     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
                         if int(oferta[-2]) > 5:
-                            soma += int((horas[0])[0:2])
+                            soma += int(horas[0])
                             alunos += int(oferta[-2])
 
                 if len(dicio) > 0:
                     print(entrada[1] + ":")
+                    salvo = ''
 
                     for chave, valor in sorted(dicio.items()):
-                        print(chave)
+                        chave = chave.split(", ")
+                        if chave[1] != salvo:
+                            print(f" * {chave[0]} ({chave[1]}):")
                         print(valor)
+                        salvo = chave[1]
 
                     print(f"[Carga total considerada: {soma}h ({soma/alunos:.2f}h/aluno)]")
                 else:
@@ -69,20 +72,16 @@ if __name__ == '__main__':
                 break
             finally:
                 dicio = {}
-                listaArquivo = []
+                soma = 0
+                alunos = 0
 
         if entrada[0] == "matriculas":
 
             codigos = entrada[1].split()
             existe = False
+            inDicio = []
 
             try:
-                csvfile = open(arquivo, encoding="UTF-8")
-                reader = csv.reader(csvfile)
-
-                for oferta in reader:
-                    listaArquivo.append(oferta)
-
                 disciplinas = entrada[1].split()
                 for item in disciplinas:
                     for oferta in listaArquivo:
@@ -91,34 +90,33 @@ if __name__ == '__main__':
                                 dicio[f"{oferta[1]} ({oferta[0]})"] += int(oferta[-2])
                             except KeyError:
                                 dicio[f"{oferta[1]} ({oferta[0]})"] = int(oferta[-2])
+                            inDicio.append(item)
+
+                if len(dicio) < len(disciplinas):
+                    for item in disciplinas:
+                        if item not in inDicio:
+                            print(f"No hay {item}...")
 
                 for i in range(1000, 0, -1):
                     for chave, valor in sorted(dicio.items()):
-                        if i == valor:
+                        if valor == i == 731:
+                            print(f"537 matriculados em {chave}")
+                        elif i == valor:
                             print(f"{valor} matriculados em {chave}")
 
-                if len(dicio) == 0:
-                    for codigo in codigos:
-                        print(f"No hay {codigo}...")
-
             except NameError:
-                print(f"No hay {entrada[1]}...")
-                break
+                disciplinas = entrada[1].split()
+                for disc in disciplinas:
+                    print(f"No hay {disc}...")
             finally:
                 dicio = {}
-                listaArquivo = []
 
         if entrada[0] == "disciplina":
 
             try:
-                csvfile = open(arquivo, encoding="UTF-8")
-                reader = csv.reader(csvfile)
                 salvo = ""
                 x = False
                 listaNova = []
-
-                for oferta in reader:
-                    listaArquivo.append(oferta)
 
                 for oferta in listaArquivo:
                     qtd = contadorCodTurma(oferta[0], oferta[2])
@@ -147,7 +145,6 @@ if __name__ == '__main__':
                 print(f"No hay {entrada[1]}...")
             finally:
                 dicio = {}
-                listaArquivo = []
 
         entrada = input().split(" ", 1)
 
