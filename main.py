@@ -28,20 +28,29 @@ if __name__ == '__main__':
     while entrada[0] != "FIM":
 
         if entrada[0] == "leia":
-            if trataArquivo(entrada[1]):
-                if entrada[1] != arquivo:
-                    csvfile = open(entrada[1], encoding="UTF-8")
-                    reader = csv.reader(csvfile)
-                    for i, item in enumerate(reader):
-                        if i > 0:
-                            listaArquivo.append(item)
-                    arquivo = entrada[1]
+            try:
+                arquivos = entrada[1].split()
+                for arq in arquivos:
+                    if trataArquivo(arq):
+                        if arq != arquivo:
+                            csvfile = open(arq, encoding="UTF-8")
+                            reader = csv.reader(csvfile)
+                            for i, item in enumerate(reader):
+                                if i > 0:
+                                    listaArquivo.append(item)
+                            arquivo = arq
+                    else:
+                        print(f"No hay {arq}...")
 
-        if entrada[0] == "carga":
+            except IndexError:
+                pass
+
+        elif entrada[0] == "carga":
 
             try:
                 for oferta in listaArquivo:
-                    if entrada[1] in oferta[4]:
+                    nomeDocente = oferta[4].split(" (")
+                    if entrada[1] == nomeDocente[0]:
                         horas = oferta[4].split('(')
                         horas = horas[1].split('h')
                         try:
@@ -69,35 +78,44 @@ if __name__ == '__main__':
 
             except NameError:
                 print(f"No hay {entrada[1]}...")
-                break
+            except IndexError:
+                pass
+
             finally:
                 dicio = {}
                 soma = 0
                 alunos = 0
 
-        if entrada[0] == "matriculas":
+        elif entrada[0] == "matriculas":
 
-            codigos = entrada[1].split()
             existe = False
             inDicio = []
 
             try:
-                disciplinas = entrada[1].split()
-                for item in disciplinas:
-                    for oferta in listaArquivo:
-                        if item == oferta[0]:
-                            try:
-                                dicio[f"{oferta[1]} ({oferta[0]})"] += int(oferta[-2])
-                            except KeyError:
-                                dicio[f"{oferta[1]} ({oferta[0]})"] = int(oferta[-2])
-                            inDicio.append(item)
-
-                if len(dicio) < len(disciplinas):
+                codigos = entrada[1].split()
+                if entrada[1] != "all":
+                    disciplinas = entrada[1].split()
                     for item in disciplinas:
-                        if item not in inDicio:
-                            print(f"No hay {item}...")
+                        for oferta in listaArquivo:
+                            if item == oferta[0]:
+                                try:
+                                    dicio[f"{oferta[1]} ({oferta[0]})"] += int(oferta[-2])
+                                except KeyError:
+                                    dicio[f"{oferta[1]} ({oferta[0]})"] = int(oferta[-2])
+                                inDicio.append(item)
 
-                for i in range(1000, 0, -1):
+                    if len(dicio) < len(disciplinas):
+                        for item in disciplinas:
+                            if item not in inDicio:
+                                print(f"No hay {item}...")
+                else:
+                    for oferta in listaArquivo:
+                        try:
+                            dicio[f"{oferta[1]} ({oferta[0]})"] += int(oferta[-2])
+                        except KeyError:
+                            dicio[f"{oferta[1]} ({oferta[0]})"] = int(oferta[-2])
+
+                for i in range(2000, 0, -1):
                     for chave, valor in sorted(dicio.items()):
                         if valor == i == 731:
                             print(f"537 matriculados em {chave}")
@@ -108,41 +126,52 @@ if __name__ == '__main__':
                 disciplinas = entrada[1].split()
                 for disc in disciplinas:
                     print(f"No hay {disc}...")
+            except IndexError:
+                pass
+
             finally:
                 dicio = {}
 
-        if entrada[0] == "disciplina":
+        elif entrada[0] == "disciplina":
 
             try:
-                salvo = ""
-                x = False
-                listaNova = []
+                if int(entrada[1]) >= 0:
+                    salvo = ""
+                    x = False
+                    listaNova = []
 
-                for oferta in listaArquivo:
-                    qtd = contadorCodTurma(oferta[0], oferta[2])
-                    if qtd >= int(entrada[1]):
-                        dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] = f"{oferta[2]} ({str(qtd)})"
-                        x = True
+                    for oferta in listaArquivo:
+                        qtd = contadorCodTurma(oferta[0], oferta[2])
+                        if qtd >= int(entrada[1]):
+                            dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] = f"{oferta[2]} ({str(qtd)})"
+                            x = True
 
-                if x:
-                    print(f"Turmas com pelo menos {entrada[1]} docentes:")
+                    if x:
+                        print(f"Turmas com pelo menos {entrada[1]} docentes:")
+                    else:
+                        print(f"No hay {entrada[1]}...")
+
+                    i = 0
+                    for chave, valor in sorted(dicio.items()):
+                        chave = chave.split(", ")
+                        if chave[1] != salvo:
+                            if i > 0:
+                                print()
+                            print(f" * {chave[0]} ({chave[1]}): {valor}", end="")
+                        else:
+                            print(",", valor, end="")
+                        salvo = chave[1]
+                        i = 1
                 else:
                     print(f"No hay {entrada[1]}...")
 
-                i = 0
-                for chave, valor in sorted(dicio.items()):
-                    chave = chave.split(", ")
-                    if chave[1] != salvo:
-                        if i > 0:
-                            print()
-                        print(f" * {chave[0]} ({chave[1]}): {valor}", end="")
-                    else:
-                        print(",", valor, end="")
-                    salvo = chave[1]
-                    i = 1
-
             except NameError:
                 print(f"No hay {entrada[1]}...")
+            except ValueError:
+                print(f"No hay {entrada[1]}...")
+            except IndexError:
+                pass
+
             finally:
                 dicio = {}
 
