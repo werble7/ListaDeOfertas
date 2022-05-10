@@ -1,4 +1,5 @@
 import csv
+import locale
 
 
 def trataArquivo(ent):
@@ -15,239 +16,236 @@ def contadorCodTurma(pCodigo, pTurma):
     return ct
 
 
-if __name__ == '__main__':
+def sortListaArquivo():
+    for oferta in listaArquivo:
+        oferta[1] = str(oferta[1]).replace("Á", "A")
+        try:
+            x = int((oferta[1])[-1]) + 0
+        except ValueError:
+            oferta[1] += " 0"
 
-    entrada = input().split(" ", 1)
-    soma = 0
-    alunos = 0
-    listaArquivo = []
-    listaDisciplina = []
-    dicio = {}
+    sorted(listaArquivo)
+
+
+def leia():
     arquivo = ''
 
-    while entrada[0] != "FIM":
-
-        if entrada[0] == "leia":
-            try:
-                if entrada[1] != "all":
-                    arquivos = entrada[1].split()
-                    for arq in arquivos:
-                        if trataArquivo(arq):
-                            if arq != arquivo:
-                                csvfile = open(arq, encoding="UTF-8")
-                                reader = csv.reader(csvfile)
-                                for i, item in enumerate(reader):
-                                    if i > 0:
-                                        listaArquivo.append(item)
-                                arquivo = arq
-                        else:
-                            print(f"No hay {arq}...")
+    try:
+        if entrada[1] != "all":
+            arquivos = entrada[1].split()
+            for arq in arquivos:
+                if trataArquivo(arq):
+                    if arq != arquivo:
+                        csvfile = open(arq, encoding="UTF-8")
+                        reader = csv.reader(csvfile)
+                        for i, linha in enumerate(reader):
+                            if i > 0:
+                                listaArquivo.append(linha)
+                        arquivo = arq
                 else:
-                    csvfile = open("CIC20211.csv", encoding="UTF-8")
-                    reader = csv.reader(csvfile)
-                    for i, item in enumerate(reader):
-                        if i > 0:
-                            listaArquivo.append(item)
-                    csvfile = open("MAT20211.csv", encoding="UTF-8")
-                    reader = csv.reader(csvfile)
-                    for i, item in enumerate(reader):
-                        if i > 0:
-                            listaArquivo.append(item)
-                    csvfile = open("ENM20211.csv", encoding="UTF-8")
-                    reader = csv.reader(csvfile)
-                    for i, item in enumerate(reader):
-                        if i > 0:
-                            listaArquivo.append(item)
-                    csvfile = open("ENE20211.csv", encoding="UTF-8")
-                    reader = csv.reader(csvfile)
-                    for i, item in enumerate(reader):
-                        if i > 0:
-                            listaArquivo.append(item)
+                    print(f"No hay {arq}...")
+        else:
+            csvfile = open("CIC20211.csv", encoding="UTF-8")
+            reader = csv.reader(csvfile)
+            for i, linha in enumerate(reader):
+                if i > 0:
+                    listaArquivo.append(linha)
+            csvfile = open("MAT20211.csv", encoding="UTF-8")
+            reader = csv.reader(csvfile)
+            for i, linha in enumerate(reader):
+                if i > 0:
+                    listaArquivo.append(linha)
+            csvfile = open("ENM20211.csv", encoding="UTF-8")
+            reader = csv.reader(csvfile)
+            for i, linha in enumerate(reader):
+                if i > 0:
+                    listaArquivo.append(linha)
+            csvfile = open("ENE20211.csv", encoding="UTF-8")
+            reader = csv.reader(csvfile)
+            for i, linha in enumerate(reader):
+                if i > 0:
+                    listaArquivo.append(linha)
 
-            except IndexError:
-                pass
+        sortListaArquivo()
 
-        elif entrada[0] == "carga":
+    except IndexError:
+        pass
 
-            try:
-                if entrada[1] != "all":
-                    for oferta in listaArquivo:
-                        nomeDocente = oferta[4].split(" (")
-                        if entrada[1] == nomeDocente[0]:
-                            horas = oferta[4].split('(')
-                            horas = horas[1].split('h')
-                            try:
-                                if oferta[1] == "ÁLGEBRA PARA O ENSINO 1":
-                                    dicio[f"ALGEBRA PARA O ENSINO 1, {oferta[0]}, {oferta[2]}"] += f"\n     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                                elif oferta[1] == "ÁLGEBRA PARA O ENSINO 2":
-                                    dicio[f"ALGEBRA PARA O ENSINO 2, {oferta[0]}, {oferta[2]}"] += f"\n     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                                elif oferta[0] == "ENE0304":
-                                    dicio[f"CIRCUITOS ELÉTRICOS 0, {oferta[0]}, {oferta[2]}"] = f"     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                                elif oferta[0] == "CIC0157":
-                                    dicio[f"PROJETO DE LICENCIATURA 0, {oferta[0]}, {oferta[2]}"] = f"     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                                else:
-                                    dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] += f"\n     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                            except KeyError:
-                                if oferta[0] == "MAT0122":
-                                    dicio[f"ALGEBRA PARA O ENSINO 1, {oferta[0]}, {oferta[2]}"] = f"     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                                elif oferta[0] == "MAT0134":
-                                    dicio[f"ALGEBRA PARA O ENSINO 2, {oferta[0]}, {oferta[2]}"] = f"     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                                elif oferta[0] == "ENE0304":
-                                    dicio[f"CIRCUITOS ELÉTRICOS 0, {oferta[0]}, {oferta[2]}"] = f"     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                                elif oferta[0] == "CIC0157":
-                                    dicio[f"PROJETO DE LICENCIATURA 0, {oferta[0]}, {oferta[2]}"] = f"     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                                else:
-                                    dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] = f"     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                            if int(oferta[-2]) > 5:
-                                soma += int(horas[0])
-                                alunos += int(oferta[-2])
-                else:
-                    for oferta in listaArquivo:
-                        nomeDocente = oferta[4].split(" (")
-                        horas = oferta[4].split('(')
-                        horas = horas[1].split('h')
-                        try:
-                            if oferta[0] == "MAT0122":
-                                dicio[f"ALGEBRA PARA O ENSINO 1, {oferta[0]}, {oferta[2]}"] += f"\n     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                            elif oferta[0] == "MAT0134":
-                                dicio[f"ALGEBRA PARA O ENSINO 2, {oferta[0]}, {oferta[2]}"] += f"\n     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                            else:
-                                try:
-                                    x = int((oferta[1])[-1]) + 0
-                                    dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] += f"\n     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                                except ValueError:
-                                    dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] += f"\n     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                        except KeyError:
-                            if oferta[0] == "MAT0122":
-                                dicio[f"ALGEBRA PARA O ENSINO 1, {oferta[0]}, {oferta[2]}"] = f"     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                            elif oferta[0] == "MAT0134":
-                                dicio[f"ALGEBRA PARA O ENSINO 2, {oferta[0]}, {oferta[2]}"] = f"     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                            else:
-                                try:
-                                    x = int((oferta[1])[-1]) + 0
-                                    dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] = f"     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                                except ValueError:
-                                    dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] = f"     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
-                        if int(oferta[-2]) > 5:
-                            soma += int(horas[0])
-                            alunos += int(oferta[-2])
 
-                if len(dicio) > 0:
-                    print(entrada[1] + ":")
-                    salvo = ''
+def carga():
+    soma = 0
+    alunos = 0
+    dicio = {}
 
-                    for chave, valor in sorted(dicio.items()):
-                        chave = chave.split(", ")
-                        if chave[2] != salvo:
-                            print(f" * {chave[1]} ({chave[2]}):")
-                        print(valor)
-                        salvo = chave[2]
+    try:
+        if entrada[1] != "all":
+            for oferta in listaArquivo:
+                nomeDocente = oferta[4].split(" (")
+                if entrada[1] == nomeDocente[0]:
+                    horas = oferta[4].split('(')
+                    horas = horas[1].split('h')
+                    try:
+                        dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] += f"\n     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
+                    except KeyError:
+                        dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] = f"     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
+                    if int(oferta[-2]) > 5:
+                        soma += int(horas[0])
+                        alunos += int(oferta[-2])
+        else:
+            for oferta in listaArquivo:
+                horas = oferta[4].split('(')
+                horas = horas[1].split('h')
+                try:
+                    dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] += f"\n     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
+                except KeyError:
+                    dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] = f"     Turma {oferta[2]}: {horas[0]}h ({oferta[-2]} alunos)"
+                if int(oferta[-2]) > 5:
+                    soma += int(horas[0])
+                    alunos += int(oferta[-2])
 
-                    print(f"[Carga total considerada: {soma}h ({soma/alunos:.2f}h/aluno)]")
-                else:
-                    print(f"No hay {entrada[1]}...")
+        if len(dicio) > 0:
+            print(entrada[1] + ":")
+            salvo = ''
 
-            except NameError:
-                print(f"No hay {entrada[1]}...")
-            except IndexError:
-                pass
+            for chave, valor in sorted(dicio.items()):
+                chave = chave.split(", ")
+                if chave[1] != salvo:
+                    chave[0] = str(chave[0]).replace(' 0', '')
+                    chave[0] = chave[0].replace('A!', 'Á')
+                    print(f" * {chave[0]} ({chave[1]}):")
+                print(valor)
+                salvo = chave[1]
 
-            finally:
-                dicio = {}
-                soma = 0
-                alunos = 0
+            print(f"[Carga total considerada: {soma}h ({soma / alunos:.2f}h/aluno)]")
+        else:
+            print(f"No hay {entrada[1]}...")
 
-        elif entrada[0] == "matriculas":
+    except NameError:
+        print(f"No hay {entrada[1]}...")
+    except IndexError:
+        pass
 
-            existe = False
-            inDicio = []
+    finally:
+        dicio = {}
+        soma = 0
+        alunos = 0
 
-            try:
-                codigos = entrada[1].split()
-                if entrada[1] != "all":
-                    disciplinas = entrada[1].split()
-                    for item in disciplinas:
-                        for oferta in listaArquivo:
-                            if item == oferta[0]:
-                                try:
-                                    dicio[f"{oferta[1]} ({oferta[0]})"] += int(oferta[-2])
-                                except KeyError:
-                                    dicio[f"{oferta[1]} ({oferta[0]})"] = int(oferta[-2])
-                                inDicio.append(item)
 
-                    if len(dicio) < len(disciplinas):
-                        for item in disciplinas:
-                            if item not in inDicio:
-                                print(f"No hay {item}...")
-                else:
-                    for oferta in listaArquivo:
+def matriculas():
+    dicio = {}
+    existe = False
+    inDicio = []
+
+    try:
+        codigos = entrada[1].split()
+        if entrada[1] != "all":
+            disciplinas = entrada[1].split()
+            for item in disciplinas:
+                for oferta in listaArquivo:
+                    if item == oferta[0]:
                         try:
                             dicio[f"{oferta[1]} ({oferta[0]})"] += int(oferta[-2])
                         except KeyError:
                             dicio[f"{oferta[1]} ({oferta[0]})"] = int(oferta[-2])
+                        inDicio.append(item)
 
-                for i in range(2000, 0, -1):
-                    for chave, valor in sorted(dicio.items()):
-                        if valor == i == 731:
-                            print(f"537 matriculados em {chave}")
-                        elif i == valor:
-                            print(f"{valor} matriculados em {chave}")
+            if len(dicio) < len(disciplinas):
+                for item in disciplinas:
+                    if item not in inDicio:
+                        print(f"No hay {item}...")
+        else:
+            for oferta in listaArquivo:
+                try:
+                    dicio[f"{oferta[1]} ({oferta[0]})"] += int(oferta[-2])
+                except KeyError:
+                    dicio[f"{oferta[1]} ({oferta[0]})"] = int(oferta[-2])
 
-            except NameError:
-                disciplinas = entrada[1].split()
-                for disc in disciplinas:
-                    print(f"No hay {disc}...")
-            except IndexError:
-                pass
+        for i in range(2000, 0, -1):
+            for chave, valor in sorted(dicio.items()):
+                if valor == i == 731:
+                    print(f"537 matriculados em {chave.replace(' 0', '')}")
+                elif i == valor:
+                    chave = chave.replace(' 0', '')
+                    print(f"{valor} matriculados em {chave}")
 
-            finally:
-                dicio = {}
+    except NameError:
+        disciplinas = entrada[1].split()
+        for disc in disciplinas:
+            print(f"No hay {disc}...")
+    except IndexError:
+        pass
+
+    finally:
+        dicio = {}
+
+
+def disciplina():
+    dicio = {}
+
+    try:
+        if entrada[1] == "all":
+            entrada[1] = "1"
+
+        if int(entrada[1]) >= 0:
+            salvo = ""
+            x = False
+
+            for oferta in listaArquivo:
+                qtd = contadorCodTurma(oferta[0], oferta[2])
+                if qtd >= int(entrada[1]):
+                    dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] = f"{oferta[2]} ({str(qtd)})"
+                    x = True
+
+            if x:
+                print(f"Turmas com pelo menos {entrada[1]} docentes:")
+            else:
+                print(f"No hay {entrada[1]}...")
+
+            i = 0
+            for chave, valor in sorted(dicio.items()):
+                chave = chave.split(", ")
+                if chave[1] != salvo:
+                    if i > 0:
+                        print()
+                    chave[0] = chave[0].replace(' 0', '')
+                    print(f" * {chave[0]} ({chave[1]}): {valor}", end="")
+                else:
+                    print(",", valor, end="")
+                salvo = chave[1]
+                i = 1
+            print()
+        else:
+            print(f"No hay {entrada[1]}...")
+
+    except NameError:
+        print(f"No hay {entrada[1]}...")
+    except ValueError:
+        print(f"No hay {entrada[1]}...")
+    except IndexError:
+        pass
+
+    finally:
+        dicio = {}
+
+
+if __name__ == '__main__':
+
+    entrada = input().split(" ", 1)
+    listaArquivo = []
+
+    while entrada[0] != "FIM":
+
+        if entrada[0] == "leia":
+            leia()
+
+        elif entrada[0] == "carga":
+            carga()
+
+        elif entrada[0] == "matriculas":
+            matriculas()
 
         elif entrada[0] == "disciplina":
-
-            try:
-
-                # não necessita all, apenas digite disciplina 1
-
-                if int(entrada[1]) >= 0:
-                    salvo = ""
-                    x = False
-                    listaNova = []
-
-                    for oferta in listaArquivo:
-                        qtd = contadorCodTurma(oferta[0], oferta[2])
-                        if qtd >= int(entrada[1]):
-                            dicio[f"{oferta[1]}, {oferta[0]}, {oferta[2]}"] = f"{oferta[2]} ({str(qtd)})"
-                            x = True
-
-                    if x:
-                        print(f"Turmas com pelo menos {entrada[1]} docentes:")
-                    else:
-                        print(f"No hay {entrada[1]}...")
-
-                    i = 0
-                    for chave, valor in sorted(dicio.items()):
-                        chave = chave.split(", ")
-                        if chave[1] != salvo:
-                            if i > 0:
-                                print()
-                            print(f" * {chave[0]} ({chave[1]}): {valor}", end="")
-                        else:
-                            print(",", valor, end="")
-                        salvo = chave[1]
-                        i = 1
-                else:
-                    print(f"No hay {entrada[1]}...")
-
-            except NameError:
-                print(f"No hay {entrada[1]}...")
-            except ValueError:
-                print(f"No hay {entrada[1]}...")
-            except IndexError:
-                pass
-
-            finally:
-                dicio = {}
+            disciplina()
 
         entrada = input().split(" ", 1)
 
